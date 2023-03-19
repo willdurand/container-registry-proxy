@@ -1,5 +1,7 @@
 # Container Registry Proxy
 
+![](https://williamdurand.fr/images/posts/2023/03/container-registry-proxy.webp)
+
 This is a container registry proxy that is mainly used to make the GitHub
 Container Registry fully compatible with the [Docker Registry HTTP API V2
 specification][http-api].
