@@ -1,5 +1,7 @@
 # Container Registry Proxy
 
+[![CI](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml)
+
 ![](https://williamdurand.fr/images/posts/2023/03/container-registry-proxy.webp)
 
 This is a container registry proxy that is mainly used to make the GitHub
