@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
+    tags:
+      - '*'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"
 
 jobs:
   build-test-package:
@@ -31,12 +35,20 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASS }}
-      if: ${{ github.ref == 'refs/heads/main' }}
+      if: github.event_name != 'pull_request'
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ github.repository }}
+      if: github.event_name != 'pull_request'
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
         context: .
         push: true
-        tags: willdurand/container-registry-proxy:latest
-      if: ${{ github.ref == 'refs/heads/main' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+      if: github.event_name != 'pull_request'
