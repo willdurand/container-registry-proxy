@@ -22,3 +22,18 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASS }}
+      if: ${{ github.ref == 'refs/heads/main' }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: willdurand/container-registry-proxy:latest
+      if: ${{ github.ref == 'refs/heads/main' }}
