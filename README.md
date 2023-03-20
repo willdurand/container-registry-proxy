@@ -9,7 +9,8 @@ Container Registry fully compatible with the [Docker Registry HTTP API V2
 specification][http-api].
 
 Important: This small application is designed for a specific use case in mind so
-it is very likely that it isn't going to solve _your_ problems.
+it is very likely that it isn't going to solve _your_ problems. For more information,
+read [my blog post about this project][blogpost].
 
 ## Environment variables
 
@@ -54,3 +55,4 @@ should now see the list of images.
 See the bundled [LICENSE](./LICENSE) file for details.
 
 [http-api]: https://docs.docker.com/registry/spec/api/
+[blogpost]: https://williamdurand.fr/2023/03/18/github-container-registry-proxy-and-synology/
