@@ -1,6 +1,6 @@
 # Container Registry Proxy
 
-[![CI](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml)
+[![CI](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/willdurand/container-registry-proxy/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/willdurand/container-registry-proxy/branch/main/graph/badge.svg?token=9O93HU5N9H)](https://codecov.io/gh/willdurand/container-registry-proxy)
 
 ![](https://williamdurand.fr/images/posts/2023/03/container-registry-proxy.webp)
 
