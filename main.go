@@ -24,13 +24,19 @@ const (
 
 type containerProxy struct {
 	ghClient GitHubClient
+	owner    string
 }
 
 // NewProxy returns an instance of container proxy, which implements the Docker
 // Registry HTTP API V2.
-func NewProxy(addr string, ghClient GitHubClient, rawUpstreamURL string) *http.Server {
+func NewProxy(addr string, ghClient GitHubClient, rawUpstreamURL, owner string) *http.Server {
 	proxy := containerProxy{
 		ghClient: ghClient,
+		owner:    owner,
+	}
+
+	if owner != "" {
+		log.Printf("packages owner set to: %s", owner)
 	}
 
 	// Create an upstream (reverse) proxy to handle the requests not supported by
@@ -68,9 +74,11 @@ func NewProxy(addr string, ghClient GitHubClient, rawUpstreamURL string) *http.S
 func (p *containerProxy) Catalog(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// Fetch the list of container packages the current user has access to.
+	// Fetch the list of container packages the current (authenticated) user has
+	// access to, unless `GITHUB_PACKAGES_OWNER` is set. In which case, we fetch
+	// the list of container packages for this specified owner.
 	opts := &github.PackageListOptions{PackageType: &packageType}
-	packages, _, err := p.ghClient.ListPackages(r.Context(), "", opts)
+	packages, _, err := p.ghClient.ListPackages(r.Context(), p.owner, opts)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errors := makeError(ERROR_UNKNOWN, fmt.Sprintf("ListPackages: %s", err))
@@ -136,11 +144,11 @@ func main() {
 	if host == "" {
 		host = defaultHost
 	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
-	addr := fmt.Sprintf("%s:%s", host, port)
 
 	rawUpstreamURL := os.Getenv("UPSTREAM_URL")
 	if rawUpstreamURL == "" {
@@ -151,7 +159,11 @@ func main() {
 	ctx := context.Background()
 	client := github.NewTokenClient(ctx, os.Getenv("GITHUB_TOKEN"))
 
-	proxy := NewProxy(addr, client.Users, rawUpstreamURL)
+	addr := fmt.Sprintf("%s:%s", host, port)
+	// We intentionally allow empty string to be the default value here, since an
+	// empty owner means the GitHub API will default to the authenticated user.
+	owner := os.Getenv("GITHUB_PACKAGES_OWNER")
+	proxy := NewProxy(addr, client.Users, rawUpstreamURL, owner)
 
 	log.Printf("starting container registry proxy on %s", addr)
 	log.Fatal(proxy.ListenAndServe())
