@@ -18,6 +18,10 @@ type githubClientMock struct {
 }
 
 func (c *githubClientMock) ListPackages(ctx context.Context, user string, opts *github.PackageListOptions) ([]*github.Package, *github.Response, error) {
+	if user != "" {
+		return nil, nil, fmt.Errorf("invalid user: %s", user)
+	}
+
 	return c.Packages, nil, c.Err
 }
 
@@ -26,7 +30,7 @@ func (c *githubClientMock) PackageGetAllVersions(ctx context.Context, user, pack
 }
 
 func TestCatalog(t *testing.T) {
-	owner := &github.User{Login: github.String("some-user")}
+	owner := &github.User{Login: github.String("some-owner")}
 
 	for _, tc := range []struct {
 		client             githubClientMock
@@ -48,7 +52,7 @@ func TestCatalog(t *testing.T) {
 				},
 			},
 			expectedStatusCode: 200,
-			expectedContent:    `{"repositories":["some-user/some-package"]}`,
+			expectedContent:    `{"repositories":["some-owner/some-package"]}`,
 		},
 		{
 			client: githubClientMock{
@@ -64,7 +68,7 @@ func TestCatalog(t *testing.T) {
 				},
 			},
 			expectedStatusCode: 200,
-			expectedContent:    `{"repositories":["some-user/package-1","some-user/package-2"]}`,
+			expectedContent:    `{"repositories":["some-owner/package-1","some-owner/package-2"]}`,
 		},
 		{
 			client: githubClientMock{
@@ -102,6 +106,7 @@ func TestCatalog(t *testing.T) {
 			"127.0.0.1:10000",
 			&tc.client,
 			"http://127.0.0.1/upstream",
+			"", // owner
 		)
 
 		req, _ := http.NewRequest("GET", "/v2/_catalog", nil)
@@ -194,6 +199,7 @@ func TestTagsList(t *testing.T) {
 			"127.0.0.1:10000",
 			&tc.client,
 			"http://127.0.0.1/upstream",
+			"", // owner
 		)
 
 		req, _ := http.NewRequest("GET", fmt.Sprintf("/v2/%s/%s/tags/list", tc.owner, tc.name), nil)
@@ -221,6 +227,7 @@ func TestCallUpstreamServer(t *testing.T) {
 		"127.0.0.1:10000",
 		&githubClientMock{},
 		upstream.URL,
+		"", // owner
 	)
 
 	req, _ := http.NewRequest("GET", "/some/other/path", nil)

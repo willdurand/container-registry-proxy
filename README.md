@@ -18,6 +18,7 @@ read [my blog post about this project][blogpost].
 - `HOST`: optional - the proxy address (default: `127.0.0.1`)
 - `PORT`: optional - the proxy port (default: `10000`)
 - `UPSTREAM_URL`: optional - the URL of the upstream container registry (default: `https://ghcr.io`)
+- `GITHUB_PACKAGES_OWNER`: optional - the name of a packages owner (GitHub username). Useful to retrieve packages from a user that isn't the user authenticated with the `GITHUB_TOKEN`
 
 ## Quick start
 
