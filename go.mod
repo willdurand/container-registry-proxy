@@ -3,7 +3,7 @@ module github.com/willdurand/container-registry-proxy
 go 1.20
 
 require (
-	github.com/go-chi/chi/v5 v5.2.0
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/google/go-github/v50 v50.2.0
 )
 
