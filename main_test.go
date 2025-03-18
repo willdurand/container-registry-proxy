@@ -219,7 +219,7 @@ func TestCallUpstreamServer(t *testing.T) {
 	upstreamResponse := "upstream server called"
 
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, upstreamResponse)
+		fmt.Fprintf(w, "%s", upstreamResponse)
 	}))
 	defer upstream.Close()
 
